@@ -6,7 +6,7 @@ load("@rules_oci//oci:defs.bzl", "oci_image")
 package(default_visibility = ["//visibility:public"])
 
 java_library(
-    name = "java-maven-lib",
+    name = "flink-example-lib",
     srcs = glob(["src/main/java/com/example/myproject/*.java"]),
     deps = [
         "@maven//:com_amazonaws_aws_kinesisanalytics_runtime",
@@ -19,9 +19,9 @@ java_library(
 )
 
 java_binary(
-    name = "java-maven",
+    name = "flink-example",
     main_class = "com.example.myproject.BasicStreamingJob",
-    runtime_deps = [":java-maven-lib"],
+    runtime_deps = [":flink-example-lib"],
 )
 
 java_test(
@@ -29,7 +29,7 @@ java_test(
     srcs = glob(["src/test/java/com/example/myproject/*.java"]),
     test_class = "com.example.myproject.TestApp",
     deps = [
-        ":java-maven-lib",
+        ":flink-example-lib",
         "@maven//:com_google_guava_guava",
         "@maven//:junit_junit",
     ],
@@ -37,7 +37,7 @@ java_test(
 
 tar(
     name = "layer",
-    srcs = ["java-maven_deploy.jar"],
+    srcs = ["flink-example_deploy.jar"],
 )
 
 oci_image(
@@ -46,7 +46,7 @@ oci_image(
     entrypoint = [
         "java",
         "-jar",
-        "/java-maven-deploy.jar",
+        "/flink-example-deploy.jar",
     ],
     tars = [":layer"],
 )
