@@ -1,0 +1,33 @@
+"Bazel dependencies"
+
+bazel_dep(name = "aspect_bazel_lib", version = "2.0.0-rc0")
+bazel_dep(name = "container_structure_test", version = "1.16.0")
+bazel_dep(name = "rules_jvm_external", version = "5.3")
+bazel_dep(name = "rules_oci", version = "1.4.0")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        "junit:junit:4.12",
+        "com.google.guava:guava:28.0-jre",
+        "com.amazonaws:aws-java-sdk-bom:1.12.281",
+        "com.amazonaws:aws-kinesisanalytics-runtime:1.2.0",
+        "org.apache.flink:flink-connector-kinesis:1.15.2",
+        "org.apache.flink:flink-streaming-java:1.15.2",
+        "org.apache.flink:flink-connector-aws-kinesis-streams:1.15.2"
+    ],
+    fetch_sources = True,
+    repositories = [
+        "http://uk.maven.org/maven2",
+        "https://jcenter.bintray.com/",
+    ],
+)
+use_repo(maven, "maven")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_java",
+    digest = "sha256:161a1d97d592b3f1919801578c3a47c8e932071168a96267698f4b669c24c76d",
+    image = "gcr.io/distroless/java17",
+)
+use_repo(oci, "distroless_java")
